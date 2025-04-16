@@ -33,7 +33,7 @@ jobs:
         run: ls -l data/
 
       - name: Upload currency DB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: fx_data_currency
           path: data/fx_data_currency.duckdb
@@ -65,7 +65,7 @@ jobs:
         run: ls -l data/
 
       - name: Upload bronze DB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: fx_data_bronze
           path: data/fx_data_bronze.duckdb
@@ -89,13 +89,13 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Download bronze DB
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.3
         with:
           name: fx_data_bronze
           path: data
 
       - name: Download currency DB
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.3
         with:
           name: fx_data_currency
           path: data
@@ -107,7 +107,7 @@ jobs:
         run: ls -l data/
 
       - name: Upload silver DB
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: fx_data_silver
           path: data/fx_data_silver.duckdb
@@ -129,7 +129,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Download silver DB
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.3
         with:
           name: fx_data_silver
           path: data
@@ -154,19 +154,19 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Download bronze DB
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.3
         with:
           name: fx_data_bronze
           path: data
 
       - name: Download silver DB
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.3
         with:
           name: fx_data_silver
           path: data
 
       - name: Download currency DB
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.1.3
         with:
           name: fx_data_currency
           path: data
