@@ -29,12 +29,14 @@ jobs:
       - name: Run build_dimentional_table
         run: python fx_pipeline/build_dimentional_table.py
 
+      - name: List files in data/
+        run: ls -l data/
+
       - name: Upload currency DB
         uses: actions/upload-artifact@v3
         with:
           name: fx_data_currency
           path: data/fx_data_currency.duckdb
-
 
   build_fx_bronze:
     name: Build FX Bronze
@@ -58,6 +60,9 @@ jobs:
 
       - name: Run build_fx_bronze
         run: python fx_pipeline/build_fx_bronze.py
+
+      - name: List files in data/
+        run: ls -l data/
 
       - name: Upload bronze DB
         uses: actions/upload-artifact@v3
@@ -98,6 +103,14 @@ jobs:
       - name: Run build_fx_silver
         run: python fx_pipeline/build_fx_silver.py
 
+      - name: List files in data/
+        run: ls -l data/
+
+      - name: Upload silver DB
+        uses: actions/upload-artifact@v3
+        with:
+          name: fx_data_silver
+          path: data/fx_data_silver.duckdb
 
   qa_fx_silver:
     name: QA FX Silver
@@ -123,7 +136,6 @@ jobs:
 
       - name: Run quality checks
         run: python fx_pipeline/qa_fx_silver.py
-
 
   view_fx_result:
     name: View FX Result
