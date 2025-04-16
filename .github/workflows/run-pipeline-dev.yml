@@ -29,6 +29,12 @@ jobs:
       - name: Run build_dimentional_table
         run: python fx_pipeline/build_dimentional_table.py
 
+      - name: Upload currency DB
+        uses: actions/upload-artifact@v3
+        with:
+          name: fx_data_currency
+          path: data/fx_data_currency.duckdb
+
 
   build_fx_bronze:
     name: Build FX Bronze
@@ -53,6 +59,11 @@ jobs:
       - name: Run build_fx_bronze
         run: python fx_pipeline/build_fx_bronze.py
 
+      - name: Upload bronze DB
+        uses: actions/upload-artifact@v3
+        with:
+          name: fx_data_bronze
+          path: data/fx_data_bronze.duckdb
 
   build_fx_silver:
     name: Build FX Silver
@@ -71,6 +82,18 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Download bronze DB
+        uses: actions/download-artifact@v3
+        with:
+          name: fx_data_bronze
+          path: data
+
+      - name: Download currency DB
+        uses: actions/download-artifact@v3
+        with:
+          name: fx_data_currency
+          path: data
 
       - name: Run build_fx_silver
         run: python fx_pipeline/build_fx_silver.py
@@ -92,6 +115,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Download silver DB
+        uses: actions/download-artifact@v3
+        with:
+          name: fx_data_silver
+          path: data
+
       - name: Run quality checks
         run: python fx_pipeline/qa_fx_silver.py
 
@@ -111,6 +140,24 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Download bronze DB
+        uses: actions/download-artifact@v3
+        with:
+          name: fx_data_bronze
+          path: data
+
+      - name: Download silver DB
+        uses: actions/download-artifact@v3
+        with:
+          name: fx_data_silver
+          path: data
+
+      - name: Download currency DB
+        uses: actions/download-artifact@v3
+        with:
+          name: fx_data_currency
+          path: data
 
       - name: Run view FX results
         run: python fx_pipeline/view_fx_result.py
