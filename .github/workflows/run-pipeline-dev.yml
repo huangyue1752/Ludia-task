@@ -1,7 +1,10 @@
 name: Run FX Pipeline
 
 on:
-  workflow_dispatch:  # Trigger manually or use 'schedule' or 'push' as needed
+  push:
+    branches:
+      - dev  # Trigger only when pushing to dev branch
+  workflow_dispatch:  # Optional: allow manual trigger from GitHub UI
 
 jobs:
   run-fx-pipeline:
