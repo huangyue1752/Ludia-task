@@ -1,0 +1,116 @@
+name: Run FX ETL - Dev Branch
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build_dimensional_table:
+    name: Build Dimensional Table
+    runs-on: ubuntu-latest
+
+    env:
+      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID }}
+      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL }}
+      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run build_dimentional_table
+        run: python fx_pipeline/build_dimentional_table.py
+
+
+  build_fx_bronze:
+    name: Build FX Bronze
+    runs-on: ubuntu-latest
+
+    env:
+      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID }}
+      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL }}
+      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run build_fx_bronze
+        run: python fx_pipeline/build_fx_bronze.py
+
+
+  build_fx_silver:
+    name: Build FX Silver
+    runs-on: ubuntu-latest
+    needs:
+      - build_dimensional_table
+      - build_fx_bronze
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run build_fx_silver
+        run: python fx_pipeline/build_fx_silver.py
+
+
+  qa_fx_silver:
+    name: QA FX Silver
+    runs-on: ubuntu-latest
+    needs: build_fx_silver
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run quality checks
+        run: python fx_pipeline/qc_fx_silver.py
+
+
+  view_fx_result:
+    name: View FX Result
+    runs-on: ubuntu-latest
+    needs: qa_fx_silver
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run view FX results
+        run: python fx_pipeline/view_fx_result.py
