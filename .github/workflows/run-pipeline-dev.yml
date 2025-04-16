@@ -29,7 +29,7 @@ jobs:
       - name: Run build_dimentional_table
         run: python fx_pipeline/build_dimentional_table.py
 
-      - name: List files in data/
+      - name: List contents of data/
         run: ls -l data/
 
       - name: Upload currency DB
@@ -61,7 +61,7 @@ jobs:
       - name: Run build_fx_bronze
         run: python fx_pipeline/build_fx_bronze.py
 
-      - name: List files in data/
+      - name: List contents of data/
         run: ls -l data/
 
       - name: Upload bronze DB
@@ -103,7 +103,7 @@ jobs:
       - name: Run build_fx_silver
         run: python fx_pipeline/build_fx_silver.py
 
-      - name: List files in data/
+      - name: List contents of data/
         run: ls -l data/
 
       - name: Upload silver DB
