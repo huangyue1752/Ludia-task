@@ -3,8 +3,8 @@ name: Run FX Pipeline
 on:
   push:
     branches:
-      - dev  # Trigger only when pushing to dev branch
-  workflow_dispatch:  # Optional: allow manual trigger from GitHub UI
+      - dev  # Trigger on push to dev branch
+  workflow_dispatch:  # Also allow manual trigger
 
 jobs:
   run-fx-pipeline:
@@ -26,7 +26,7 @@ jobs:
         pip install duckdb python-dotenv pandas requests
 
     - name: Run Bronze Builder
-      run: python build_fx_bronze.py
+      run: python fx_pipeline/build_fx_bronze.py
 
     - name: Run Silver Builder
-      run: python build_fx_silver.py
+      run: python fx_pipeline/build_fx_silver.py
