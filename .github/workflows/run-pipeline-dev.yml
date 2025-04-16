@@ -93,7 +93,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run quality checks
-        run: python fx_pipeline/qc_fx_silver.py
+        run: python fx_pipeline/qa_fx_silver.py
 
 
   view_fx_result:
