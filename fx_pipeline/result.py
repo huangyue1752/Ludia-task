@@ -1,5 +1,4 @@
 import duckdb
-import pandas as pd
 import os
 
 DUCKDB_FILE = os.path.join("data", "fx_data_bronze.duckdb")
@@ -9,7 +8,7 @@ def preview_exchange_rates():
     
     print("Previewing the latest FX data...\n")
 
-    df = con.execute(f"""
+    df = con.execute("""
         SELECT * 
         FROM exchange_rates
         ORDER BY timestamp DESC

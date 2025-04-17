@@ -1,20 +1,19 @@
-name: Run ETL and QA in Dev
+name: Run ETL and QA in Prod
 
 on:
   push:
-    branches: [dev]
-
+    branches:
+      - main  # Trigger only when code is merged into main
   schedule:
     - cron: '*/30 * * * *'  # Runs every day at 7:00 AM EST
-
 jobs:
   fx_pipeline_etl_qa:
     runs-on: ubuntu-latest
 
     env:
-      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID }}
-      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL }}
-      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL }}
+      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID_PROD }}
+      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL_PROD }}
+      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL_PROD }}
 
     steps:
       - name: Checkout code
@@ -32,13 +31,11 @@ jobs:
       - name: Run Ruff linting
         run: ruff check
 
-      - name: Run FX Loader
+      - name: Run FX Loader (Prod)
         run: python fx_pipeline/loading.py
 
-      - name: Run QA Check
+      - name: Run QA Check (Prod)
         run: python fx_pipeline/qa.py
- 
-      - name: Run result
+
+      - name: View result
         run: python fx_pipeline/result.py
-      
-      
