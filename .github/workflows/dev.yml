@@ -35,7 +35,7 @@ jobs:
       - name: Run QA Check
         run: python fx_pipeline/qa.py
  
-      - name: Run QA Check
+      - name: Run result
         run: python fx_pipeline/result.py
       
       
