@@ -8,6 +8,11 @@ jobs:
   fx_pipeline_etl_qa:
     runs-on: ubuntu-latest
 
+    env:  # 👈 inject secrets into environment
+      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID }}
+      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL }}
+      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,7 +26,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: ⚙️ Run FX Loader
+      - name: Run FX Loader
         run: python fx_pipeline/loading.py
 
       - name: Run QA Check
