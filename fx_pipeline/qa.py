@@ -9,11 +9,11 @@ def run_quality_checks():
     con = duckdb.connect(SILVER_DB)
     issues = []
 
-    print("🧪 Running quality checks on exchange_rates...\n")
+    print("Running quality checks on exchange_rates...\n")
 
     # 1. Total row count
     total = con.execute("SELECT COUNT(*) FROM exchange_rates").fetchone()[0]
-    print(f"✅ Total rows: {total}")
+    print(f"Total rows: {total}")
 
     # 2. Null values check
     nulls = con.execute("""
@@ -25,10 +25,10 @@ def run_quality_checks():
         FROM exchange_rates
     """).fetchone()
 
-    print("\n🚨 Null values:")
+    print("\nNull values:")
     print(f"currency: {nulls[0]}, rate: {nulls[1]}, timestamp: {nulls[2]}, name: {nulls[3]}")
     if any(val > 0 for val in nulls):
-        issues.append("❌ Null values found in one or more columns.")
+        issues.append("Null values found in one or more columns.")
 
     # 3. Duplicate check (by currency + timestamp)
     duplicate_count = con.execute("""
@@ -39,17 +39,17 @@ def run_quality_checks():
             HAVING COUNT(*) > 1
         )
     """).fetchone()[0]
-    print(f"\n🔍 Duplicate rows (currency + timestamp): {duplicate_count}")
+    print(f"\nDuplicate rows (currency + timestamp): {duplicate_count}")
     if duplicate_count > 0:
-        issues.append("❌ Duplicate rows detected.")
+        issues.append("Duplicate rows detected.")
 
     # 4. Missing currency names
     missing_names = con.execute("""
         SELECT COUNT(*) FROM exchange_rates WHERE name IS NULL
     """).fetchone()[0]
-    print(f"\n❓ Missing currency names: {missing_names}")
+    print(f"\n Missing currency names: {missing_names}")
     if missing_names > 0:
-        issues.append("❌ Missing currency names found.")
+        issues.append("Missing currency names found.")
 
     # 5. Negative rate check
     negative_rates = con.execute("""
@@ -57,18 +57,18 @@ def run_quality_checks():
     """).fetchone()[0]
     print(f"\n⚠️ Negative exchange rates found: {negative_rates}")
     if negative_rates > 0:
-        issues.append("❌ Negative FX rates detected.")
+        issues.append("Negative FX rates detected.")
 
     con.close()
 
     # Raise error if any issues were found
     if issues:
-        print("\n❌ QUALITY CHECK FAILED:")
+        print("\n QUALITY CHECK FAILED:")
         for issue in issues:
             print(issue)
         sys.exit(1)  # Exit with error for CI/CD to catch
     else:
-        print("\n✅ ALL QUALITY CHECKS PASSED.")
+        print("\n ALL QUALITY CHECKS PASSED.")
 
 if __name__ == "__main__":
     run_quality_checks()
