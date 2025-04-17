@@ -16,10 +16,10 @@ def fetch_exchange_rates():
     try:
         response = requests.get(url)
         response.raise_for_status()
-        print("✅ FX rates fetched")
+        print("FX rates fetched")
         return response.json()
     except requests.exceptions.RequestException as e:
-        print("❌ Error fetching exchange rates:", e)
+        print("Error fetching exchange rates:", e)
         return None
 
 def fetch_currency_metadata():
@@ -29,10 +29,10 @@ def fetch_currency_metadata():
         print("Response status code:", response.status_code)
         response.raise_for_status()
         data = response.json()
-        print("✅ Currency metadata fetched")
+        print("Currency metadata fetched")
         return data
     except requests.exceptions.RequestException as e:
-        print("❌ Error fetching currency metadata:", e)
+        print("Error fetching currency metadata:", e)
         return None
 
 def clean_and_store_fx_rates(fx_data, currency_metadata):
@@ -44,7 +44,7 @@ def clean_and_store_fx_rates(fx_data, currency_metadata):
     df_rates = pd.DataFrame(rates.items(), columns=["currency", "rate"])
     df_rates["timestamp"] = pd.to_datetime(timestamp, unit='s')
 
-    # 🔁 Deduplicate currency-rate combos (to avoid duplicates from API)
+    # Deduplicate currency-rate combos (to avoid duplicates from API)
     df_rates = df_rates.drop_duplicates(subset=["currency", "rate"])
 
     df_currency = pd.DataFrame(list(metadata.items()), columns=["currency", "name"])
@@ -72,9 +72,9 @@ def clean_and_store_fx_rates(fx_data, currency_metadata):
 
     if existing == 0:
         con.execute("INSERT INTO exchange_rates SELECT * FROM df_merged")
-        print(f"✅ New FX rates inserted for timestamp {ts_str}")
+        print(f"New FX rates inserted for timestamp {ts_str}")
     else:
-        print(f"⏩ Timestamp {ts_str} already exists. Skipping insert.")
+        print(f"Timestamp {ts_str} already exists. Skipping insert.")
 
     con.close()
     return df_merged
