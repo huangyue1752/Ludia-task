@@ -4,11 +4,14 @@ on:
   push:
     branches: [dev]
 
+  schedule:
+    - cron: '*/30 * * * *'  # Runs every day at 7:00 AM EST
+
 jobs:
   fx_pipeline_etl_qa:
     runs-on: ubuntu-latest
 
-    env:  # 👈 inject secrets into environment
+    env:
       OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID }}
       FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL }}
       CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL }}
