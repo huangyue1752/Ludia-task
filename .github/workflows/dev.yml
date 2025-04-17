@@ -1,0 +1,28 @@
+name: Run ETL and QA in Dev
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  fx_pipeline_etl_qa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: ⚙️ Run FX Loader
+        run: python fx_pipeline/loading.py
+
+      - name: Run QA Check
+        run: python fx_pipeline/qa.py
