@@ -1,6 +1,7 @@
 import duckdb
 import sys
 import os
+from datetime import datetime
 
 DUCKDB_FILE = os.path.join("data", "fx_data_bronze.duckdb")
 
