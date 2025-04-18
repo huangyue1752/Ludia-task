@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID_PROD }}
-      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL_PROD }}
-      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL_PROD }}
+      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID }}
+      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL }}
+      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL }}
 
     steps:
       - name: Checkout code
