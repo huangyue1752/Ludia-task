@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Trigger only when code is merged into main
   schedule:
-    - cron: '*/30 * * * *'  # Runs every day at 7:00 AM EST
+    - cron: '0 12 * * *'  # 7:00 AM Eastern Time (EST/EDT)
 jobs:
   fx_pipeline_etl_qa:
     runs-on: ubuntu-latest

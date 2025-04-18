@@ -1,11 +1,12 @@
 import duckdb
 import sys
 import os
+from datetime import datetime, timedelta
 
-SILVER_DB = os.path.join("data", "fx_data_bronze.duckdb")
+DUCKDB_FILE = os.path.join("data", "fx_data_bronze.duckdb")
 
 def run_quality_checks():
-    con = duckdb.connect(SILVER_DB)
+    con = duckdb.connect(DUCKDB_FILE)
     issues = []
 
     print("Running quality checks on exchange_rates...\n")
@@ -46,7 +47,7 @@ def run_quality_checks():
     missing_names = con.execute("""
         SELECT COUNT(*) FROM exchange_rates WHERE name IS NULL
     """).fetchone()[0]
-    print(f"\n Missing currency names: {missing_names}")
+    print(f"\nMissing currency names: {missing_names}")
     if missing_names > 0:
         issues.append("Missing currency names found.")
 
@@ -54,20 +55,44 @@ def run_quality_checks():
     negative_rates = con.execute("""
         SELECT COUNT(*) FROM exchange_rates WHERE rate < 0
     """).fetchone()[0]
-    print(f"\n⚠️ Negative exchange rates found: {negative_rates}")
+    print(f"\nNegative exchange rates found: {negative_rates}")
     if negative_rates > 0:
         issues.append("Negative FX rates detected.")
+
+    # 6. Date continuity check
+    latest_dates = con.execute("""
+        SELECT DISTINCT CAST(timestamp AS DATE) as ts
+        FROM exchange_rates
+        ORDER BY ts DESC
+        LIMIT 2
+    """).fetchall()
+
+    if len(latest_dates) < 2:
+        issues.append("Not enough distinct dates to perform date continuity check.")
+    else:
+        latest_date = latest_dates[0][0]
+        second_latest_date = latest_dates[1][0]
+        today = datetime.today().date()
+
+        print(f"\nLatest date in DB: {latest_date}")
+        print(f"Second latest date in DB: {second_latest_date}")
+        print(f"Today's date: {today}")
+
+        if latest_date != today:
+            issues.append(f"Latest data is not from today. Found: {latest_date}")
+        if (latest_date - second_latest_date).days != 1:
+            issues.append("Latest and second latest timestamps are not consecutive.")
 
     con.close()
 
     # Raise error if any issues were found
     if issues:
-        print("\n QUALITY CHECK FAILED:")
+        print("\nQUALITY CHECK FAILED:")
         for issue in issues:
-            print(issue)
-        sys.exit(1)  # Exit with error for CI/CD to catch
+            print(f"- {issue}")
+        sys.exit(1)
     else:
-        print("\n ALL QUALITY CHECKS PASSED.")
+        print("\nALL QUALITY CHECKS PASSED.")
 
 if __name__ == "__main__":
     run_quality_checks()
