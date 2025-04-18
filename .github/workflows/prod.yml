@@ -1,0 +1,41 @@
+name: Run ETL and QA in Prod
+
+on:
+  push:
+    branches:
+      - main  # Trigger only when code is merged into main
+  schedule:
+    - cron: '*/30 * * * *'  # Runs every day at 7:00 AM EST
+jobs:
+  fx_pipeline_etl_qa:
+    runs-on: ubuntu-latest
+
+    env:
+      OPENEXCHANGE_APP_ID: ${{ secrets.OPENEXCHANGE_APP_ID_PROD }}
+      FX_RATES_API_URL: ${{ secrets.FX_RATES_API_URL_PROD }}
+      CURRENCY_API_URL: ${{ secrets.CURRENCY_API_URL_PROD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Ruff linting
+        run: ruff check
+
+      - name: Run FX Loader (Prod)
+        run: python fx_pipeline/loading.py
+
+      - name: Run QA Check (Prod)
+        run: python fx_pipeline/qa.py
+
+      - name: View result
+        run: python fx_pipeline/result.py
