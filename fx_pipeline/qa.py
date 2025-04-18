@@ -1,7 +1,6 @@
 import duckdb
 import sys
 import os
-from datetime import datetime, timedelta
 
 DUCKDB_FILE = os.path.join("data", "fx_data_bronze.duckdb")
 
